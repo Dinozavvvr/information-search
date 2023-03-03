@@ -1,8 +1,14 @@
+import re
 from os import listdir
 
-import re
-from string import digits
 from bs4 import BeautifulSoup as bs
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from pymorphy2 import MorphAnalyzer
+
+morph = MorphAnalyzer()
+lemmatizer = WordNetLemmatizer()
+ru_stopwords = stopwords.words('russian')
 
 
 # read collection of files in directory
@@ -41,14 +47,18 @@ def tokenize_collection(texts):
 
 def tokenize(text):
     # clear text
-    t = re.sub(r'[^\w-]', ' ', text)
+    text = text.lower()
+    t = re.sub(r'[^А-Яа-я-]', ' ', text)
     t = re.sub(r'\d', '', t)
-    t = re.sub(r'\s\w\s', '', t)
+    # t = re.sub(r'\s\w\s', '', t)
     t = re.sub(r'\s\s+', ' ', t)
     t = t.split(' ')
 
     return set(t)
 
+
+def remove_stopwords(tokens):
+    return [word for word in tokens if not word in ru_stopwords]
 
 
 def clean_html(html):
@@ -77,8 +87,32 @@ def save_tokens(tokens):
             file.write(token + "\n")
 
 
+def get_lemmas(tokens):
+    lemmas = {}
+
+    for token in tokens:
+        token_lem = morph.normal_forms(token)[0]
+        if not token_lem in lemmas:
+            lemmas[token_lem] = [token]
+        else:
+            lemmas[token_lem].append(token)
+
+    return lemmas
+
+
+def save_lemmas(lemmas):
+    with open('lemmas.txt', 'w') as file:
+        for lemma, forms in lemmas.items():
+            file.write(f'{lemma}: {" ".join(forms)}\n')
+
+
 if __name__ == '__main__':
     contents = dir_reader('data')
     texts = extract_text(contents)
     tokens = tokenize_collection(texts)
+    tokens = remove_stopwords(tokens)
+
     save_tokens(tokens)
+
+    lemmas = get_lemmas(tokens)
+    save_lemmas(lemmas)
