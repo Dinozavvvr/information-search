@@ -16,10 +16,12 @@ def dir_reader(directory):
     files = [file for file in listdir(directory)]
 
     files_content = []
+    filenames = []
     for file in files:
+        filenames.append(file)
         files_content.append(file_reader(f'{directory}/{file}'))
 
-    return files_content
+    return files_content, filenames
 
 
 # read single file
@@ -37,12 +39,12 @@ def extract_text(htmls):
 
 
 def tokenize_collection(texts):
-    tokens = set()
+    tokens_list = []
 
     for text in texts:
-        tokens.update(tokenize(text))
+        tokens_list.append(tokenize(text))
 
-    return tokens
+    return tokens_list
 
 
 def tokenize(text):
@@ -57,8 +59,26 @@ def tokenize(text):
     return set(t)
 
 
-def remove_stopwords(tokens):
-    return [word for word in tokens if not word in ru_stopwords]
+def remove_stopwords(tokens_list):
+    removed_stopwords = []
+    for token_list in tokens_list:
+        removed_ = []
+        for token in token_list:
+            if token not in ru_stopwords:
+                removed_.append(token)
+
+        removed_stopwords.append(removed_)
+
+    return removed_stopwords
+
+
+def merge(tokens_list):
+    tokens_set = set()
+
+    for token_list in tokens_list:
+        tokens_set.update(token_list)
+
+    return tokens_set
 
 
 def clean_html(html):
@@ -92,7 +112,7 @@ def get_lemmas(tokens):
 
     for token in tokens:
         token_lem = morph.normal_forms(token)[0]
-        if not token_lem in lemmas:
+        if token_lem not in lemmas:
             lemmas[token_lem] = [token]
         else:
             lemmas[token_lem].append(token)
@@ -106,13 +126,36 @@ def save_lemmas(lemmas):
             file.write(f'{lemma}: {" ".join(forms)}\n')
 
 
+def create_inverted_index(tokens_list, filenames):
+    inverted_index = {}
+
+    for i, token_list in enumerate(tokens_list):
+        for token in token_list:
+            token_lem = morph.normal_forms(token)[0]
+            if token_lem not in inverted_index:
+                inverted_index[token_lem] = [filenames[i]]
+            else:
+                inverted_index[token_lem].append(filenames[i])
+
+    return inverted_index
+
+
+def save_inverted_index(inverted_index):
+    with open('inverted_index.txt', 'w') as file:
+        for inverted_item, docs in inverted_index.items():
+            file.write(f'{inverted_item}: {" ".join(docs)}\n')
+
+
 if __name__ == '__main__':
-    contents = dir_reader('data')
+    contents, filenames = dir_reader('data')
     texts = extract_text(contents)
-    tokens = tokenize_collection(texts)
-    tokens = remove_stopwords(tokens)
 
-    save_tokens(tokens)
+    tokens_list = tokenize_collection(texts)
+    tokens_list = remove_stopwords(tokens_list)
+    tokens_set = merge(tokens_list)
+    lemmas = get_lemmas(tokens_set)
+    inverted_index = create_inverted_index(tokens_list, filenames)
 
-    lemmas = get_lemmas(tokens)
+    save_tokens(tokens_set)
     save_lemmas(lemmas)
+    save_inverted_index(inverted_index)
