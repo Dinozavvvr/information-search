@@ -52,7 +52,7 @@ def tokenize(text):
     text = text.lower()
     t = re.sub(r'[^А-Яа-я-]', ' ', text)
     t = re.sub(r'\d', '', t)
-    # t = re.sub(r'\s\w\s', '', t)
+    t = re.sub(r'\s\w\s', '', t)
     t = re.sub(r'\s\s+', ' ', t)
     t = t.split(' ')
 
