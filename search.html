@@ -263,13 +263,13 @@
             });
 
             $('#search_button').click(function () {
+                $("#results").html("")
                 var query = $('#search_field').val();
                 $.ajax({
                     url: '/search',
                     type: 'POST',
                     data: {query: query},
                     success: function (data) {
-                        $("#results").html("")
                         for (var i = 0; i < data.length; i++) {
                             var thingsToPrint =
                                 "<a class='result-link' href='" +
