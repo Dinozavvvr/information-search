@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ArabicSearch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=System">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 13px;
+        }
+
+        .container {
+            font-size: 13px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #222222;
+            height: 941px;
+            width: 100%;
+        }
+
+        header {
+            height: 60px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 6px;
+        }
+
+        .gb_Pe {
+            height: 24px;
+            width: 24px;
+            opacity: .7;
+        }
+
+        header a {
+            color: rgba(0, 0, 0, 0.87);;
+            padding: 8px;
+            text-decoration: none;
+        }
+
+        header a:hover {
+            text-decoration: underline;
+        }
+
+        header a:nth-child(3) {
+            display: flex;
+            align-items: center;
+        }
+
+        header a:nth-child(3):hover {
+            background-color: rgba(128, 128, 128, 0.2);
+            border-radius: 50%;
+        }
+
+        header img {
+            border-radius: 50%;
+        }
+
+        header img:hover {
+            box-shadow: 1px 1px 2px rgba(14, 68, 10, 0.589);
+            outline: 4px solid rgba(17, 54, 5, 0.2)
+        }
+
+        main section.image {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 290px;;
+            width: 100%;
+        }
+
+        .search-outer {
+            height: 160px;
+            padding: 20px;
+        }
+
+        .search-inner {
+            height: 140px;
+            max-width: 584px;
+            margin: 0 auto;
+            padding-top: 6px;
+            text-align: center;
+        }
+
+        .search-icon {
+            display: flex;
+            align-items: center;
+            height: 44px;
+            width: 33px;
+            margin-right: 5px;
+        }
+
+        .search-icon svg {
+            height: 20px;
+            width: 20px;
+            opacity: .4;
+            cursor: pointer;
+        }
+
+        input[type="text"] {
+            width: 480px;
+            height: 34px;
+            position: relative;
+            border: none;
+            outline: none;
+            font-size: 1.5rem;
+            padding-bottom: 7px;
+            color: inherit;
+        }
+
+        input[type="text"]:focus {
+            border: none;
+            outline: none;
+        }
+
+        .voice-search {
+            display: flex;
+            align-items: center;
+            height: 44px;
+            width: 40px;
+            padding: 0 8px;
+        }
+
+        .voice-search svg {
+            height: 24px;
+            width: 24px;
+            cursor: pointer;
+        }
+
+        .button-tags {
+            width: 100%;
+            height: 108px;
+            padding-top: 30px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .button-tags button {
+            margin: 11px 4px;
+            border: 1px solid #f2f2f2;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #5f6368;
+            font-size: 14px;
+            height: 36px;
+            padding: 0 16px;
+            border-radius: 5px;
+            cursor: pointer
+        }
+
+        .button-tags button:hover {
+            border: 1px solid rgba(128, 128, 128, 0.5);
+        }
+
+        footer {
+            width: 100%;
+            height: 40px;
+            background-color: #f2f2f2;
+            position: fixed;
+            bottom: 0;
+
+        }
+
+        .google-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .google-footer ul {
+            height: 40px;
+            list-style-type: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .google-footer ul li {
+            padding-left: 27px;
+        }
+
+        .google-footer ul li a {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #5f6368;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        ul:last-child {
+            margin-right: 30px;
+        }
+
+
+        #results {
+            font-size: 17px;
+            line-height: 1.6;
+            width: 80%;
+        }
+
+        .results-conteiner {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 100px;
+        }
+
+        main {
+            padding-bottom: 100px;
+        }
+
+        .result-box h3 {
+            font-weight: normal;
+            margin: 10px;
+            font-size: 24px;
+        }
+
+
+        a {
+            color: #0066cc;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            color: #004080;
+            text-decoration: underline;
+        }
+
+        .result-box {
+            border-radius: 7px;
+            background: rgba(255, 222, 173, 0.2);
+
+            padding: 10px;
+            margin: 10px 20px;
+        }
+
+        .result-link, .result-link:hover, .result-link:active {
+            color: black;
+            text-decoration: none;
+        }
+
+        .result-link:hover {
+            color: grey;
+        }
+
+
+        a:hover {
+            text-decoration: none !important;
+        }
+
+    </style>
+    <script>
+        $(document).ready(function () {
+            $('#search_field').keypress(function (event) {
+                if (event.keyCode === 13) {
+                    $('#search_button').click();
+                }
+            });
+
+            $('#search_button').click(function () {
+                var query = $('#search_field').val();
+                $.ajax({
+                    url: '/search',
+                    type: 'POST',
+                    data: {query: query},
+                    success: function (data) {
+                        $("#results").html("")
+                        for (var i = 0; i < data.length; i++) {
+                            var thingsToPrint =
+                                "<a class='result-link' href='" +
+                                data[i] + "' target='_blank'>" +
+                                "<div class='well result-box'>" +
+                                "<h3 class='result-title'> هذا رابط للصفحة " + (i + 1) + "  </h3>" +
+                                "</div>" +
+                                "</a>";
+
+                            $("#results").append(thingsToPrint);
+                        }
+                    },
+                    error: function () {
+                        $('#results').html('No results found')
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <!--Main Start-->
+    <main>
+        <section class="image">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
+                 xmlns:svgjs="http://svgjs.dev/svgjs" width="350" height="200.54999999999998">
+                <g>
+                    <svg viewBox="0 0 395.52 90.1858567068315" height="90.1858567068315" width="350"
+                         xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         xmlns:svgjs="http://svgjs.com/svgjs" x="0" y="55.18207164658424"
+                         viewbox="0 0 350 200.54999999999998">
+                        <g>
+                            <svg viewBox="0 0 679.9327152752006 155.03720274599542" height="90.1858567068315"
+                                 width="395.52">
+                                <g>
+                                    <rect width="6.411787453873502" height="155.03720274599542" x="261.21614391066356"
+                                          y="0" fill="#2b2b2b" opacity="1" stroke-width="0" stroke="transparent"
+                                          fill-opacity="1" class="rect-o-0" data-fill-palette-color="primary" rx="1%"
+                                          id="o-0" data-palette-color="#2b2b2b"></rect>
+                                </g>
+                                <g transform="matrix(1,0,0,1,284.4127152752007,0.3856646834477431)">
+                                    <svg viewBox="0 0 395.5199999999999 154.26587337909993" height="154.26587337909993"
+                                         width="395.5199999999999">
+                                        <g id="textblocktransform">
+                                            <svg viewBox="0 0 395.5199999999999 154.26587337909993"
+                                                 height="154.26587337909993" width="395.5199999999999" id="textblock">
+                                                <g>
+                                                    <svg viewBox="0 0 395.5199999999999 154.26587337909993"
+                                                         height="154.26587337909993" width="395.5199999999999">
+                                                        <g transform="matrix(1,0,0,1,0,0)">
+                                                            <svg width="395.5199999999999"
+                                                                 viewBox="-0.4999990463256836 -33.75 199.10000610351562 73.25"
+                                                                 height="154.26587337909993"
+                                                                 data-palette-color="#2b2b2b">
+                                                                <svg></svg>
+                                                                <svg></svg>
+                                                                <g class="undefined-text-0"
+                                                                   data-fill-palette-color="primary" id="text-0">
+                                                                    <path xmlns="http://www.w3.org/2000/svg"
+                                                                          d="M34.95-1.2v1.2h-13.5v-1.05l3.9-0.6-4.4-11.5h-11.25l-4.2 10.65 4.45 1.3v1.2h-10.45v-1.2l3.8-1.3 12.3-30.9h2.45l13.05 31.75zM10.4-15h9.8l-4.9-12.15zM45.15-31.95v14.35h2.5c5.967 0 8.95-2.5 8.95-7.5v0c0-2.467-0.583-4.26-1.75-5.38-1.167-1.113-3.033-1.67-5.6-1.67v0c-1 0-2.367 0.067-4.1 0.2zM42.5-33.5h2.55l5.7-0.15c7.567 0 11.35 2.85 11.35 8.55v0c0 2.467-0.84 4.49-2.52 6.07-1.687 1.587-3.863 2.38-6.53 2.38v0c-0.233 0-0.65-0.033-1.25-0.1v0 0.1c3.567 0.5 6.027 1.657 7.38 3.47 1.347 1.82 2.02 4.597 2.02 8.33v0c0 2.333 0.433 3.683 1.3 4.05v0c0.4 0.267 0.96 0.4 1.68 0.4 0.713 0 1.637-0.217 2.77-0.65v0 1.25c-1.767 0.633-3.383 0.95-4.85 0.95v0c-3.267 0-5.283-1.4-6.05-4.2v0c-0.2-0.733-0.307-1.767-0.32-3.1-0.02-1.333-0.08-2.517-0.18-3.55-0.1-1.033-0.333-2.067-0.7-3.1v0c-0.833-2.233-3.133-3.35-6.9-3.35v0h-2.8v14.7l3.85 0.35v1.1h-12.75v-1.05l3.75-0.4v-30.4l-4.35-0.5v-1.3c2.133 0.1 4.417 0.15 6.85 0.15zM101.7-1.2v1.2h-13.5v-1.05l3.9-0.6-4.4-11.5h-11.25l-4.2 10.65 4.45 1.3v1.2h-10.45v-1.2l3.8-1.3 12.3-30.9h2.45l13.05 31.75zM77.15-15h9.8l-4.9-12.15zM102.4-33.4h14.15c4.033 0 6.957 0.65 8.77 1.95 1.82 1.3 2.73 3.15 2.73 5.55 0 2.4-0.64 4.307-1.92 5.72-1.287 1.42-3.163 2.263-5.63 2.53v0c3.233 0.567 5.583 1.523 7.05 2.87 1.467 1.353 2.2 3.263 2.2 5.73v0c0 3.067-1.267 5.34-3.8 6.82-2.533 1.487-5.817 2.23-9.85 2.23v0h-13.1v-1.2l3.75-0.45v-30.1l-4.35-0.45zM118.65-16.2v0c-1.267-0.267-2.5-0.4-3.7-0.4-1.2 0-2.183 0.017-2.95 0.05v0 15.15c0.833 0.233 1.59 0.35 2.27 0.35 0.687 0 1.503-0.05 2.45-0.15 0.953-0.1 2.053-0.373 3.3-0.82 1.253-0.453 2.297-1.33 3.13-2.63 0.833-1.3 1.25-2.9 1.25-4.8v0c0-3.7-1.917-5.95-5.75-6.75zM115.25-32.05h-3.25v14h2.1c5.633 0 8.45-2.567 8.45-7.7v0c0-2.233-0.577-3.843-1.73-4.83-1.147-0.98-3.003-1.47-5.57-1.47zM147.7-1.2v1.2h-13.85v-1.2l4.35-0.45v-30.1l-4.35-0.45v-1.2h13.85v1.2l-4.35 0.45v30.1zM171-33.75v0c0 0 3.433 0.15 10.3 0.45v0l0.3 9.1h-1.6l-1.7-6.55c-1.8-0.767-3.933-1.15-6.4-1.15v0c-4.033 0-7.373 1.323-10.02 3.97-2.653 2.653-3.98 6.513-3.98 11.58 0 5.067 1.293 8.807 3.88 11.22 2.58 2.42 5.887 3.63 9.92 3.63v0c2.7 0 5.117-0.4 7.25-1.2v0l1.85-5.75 1.4 0.05-0.3 7.5c-3.833 0.8-7.123 1.2-9.87 1.2-2.753 0-5.02-0.15-6.8-0.45-1.787-0.3-3.53-0.833-5.23-1.6-1.7-0.767-3.14-1.75-4.32-2.95-1.187-1.2-2.137-2.76-2.85-4.68-0.72-1.913-1.08-4.253-1.08-7.02 0-2.767 0.543-5.327 1.63-7.68 1.08-2.347 2.553-4.203 4.42-5.57v0c3.7-2.733 8.1-4.1 13.2-4.1z"
+                                                                          fill="#2b2b2b" fill-rule="nonzero"
+                                                                          stroke="none" stroke-width="1"
+                                                                          stroke-linecap="butt" stroke-linejoin="miter"
+                                                                          stroke-miterlimit="10" stroke-dasharray=""
+                                                                          stroke-dashoffset="0" font-family="none"
+                                                                          font-weight="none" font-size="none"
+                                                                          text-anchor="none"
+                                                                          style="mix-blend-mode: normal"
+                                                                          data-fill-palette-color="primary"
+                                                                          opacity="1"></path>
+                                                                    <path xmlns="http://www.w3.org/2000/svg"
+                                                                          d="M22.75 12.3l-1.7-5.7c-1.8-0.633-3.65-0.95-5.55-0.95-1.9 0-3.567 0.54-5 1.62-1.433 1.087-2.15 2.697-2.15 4.83v0c0 2.067 0.883 3.65 2.65 4.75v0c0.967 0.6 1.76 1.033 2.38 1.3 0.613 0.267 1.51 0.617 2.69 1.05 1.187 0.433 1.997 0.74 2.43 0.92 0.433 0.187 1.077 0.47 1.93 0.85 0.847 0.387 1.48 0.73 1.9 1.03 0.413 0.3 0.92 0.717 1.52 1.25 0.6 0.533 1.05 1.067 1.35 1.6v0c0.733 1.367 1.1 2.85 1.1 4.45v0c0 2.833-1.15 5.15-3.45 6.95-2.3 1.8-5.283 2.7-8.95 2.7v0c-2.8 0-5.417-0.467-7.85-1.4v0c-1.2-0.433-2.183-1.033-2.95-1.8-0.767-0.767-1.15-1.65-1.15-2.65v0c0-1.633 1.183-2.75 3.55-3.35v0c0.367 2 1.067 3.617 2.1 4.85 1.033 1.233 2.11 2.05 3.23 2.45 1.113 0.4 2.48 0.6 4.1 0.6 1.613 0 3.137-0.523 4.57-1.57 1.433-1.053 2.15-2.78 2.15-5.18v0c0-1.833-0.833-3.333-2.5-4.5v0c-1.333-0.9-2.973-1.75-4.92-2.55-1.953-0.8-3.263-1.343-3.93-1.63-0.667-0.28-1.523-0.73-2.57-1.35-1.053-0.613-1.83-1.22-2.33-1.82v0c-1.3-1.567-1.95-3.367-1.95-5.4v0c0-3.133 1.117-5.5 3.35-7.1 2.233-1.6 5.317-2.4 9.25-2.4v0c2.367 0 5.117 0.267 8.25 0.8v0 7.35zM55.95 38.35h-25.55v-1.2l4.35-0.45v-30.1l-4.35-0.55v-1.1h23.95l0.05 7.1h-1.3l-1.7-5.3-11.5-0.15v13.45h10.1l1.55-3.7h1v9.3h-1.05l-1.5-3.8h-10.1v14.9l13-0.15 2.35-5.7h1.3zM93.25 37.15v1.2h-13.5v-1.05l3.9-0.6-4.4-11.5h-11.25l-4.2 10.65 4.45 1.3v1.2h-10.45v-1.2l3.8-1.3 12.3-30.9h2.45l13.05 31.75zM68.7 23.35h9.8l-4.9-12.15zM103.45 6.4v14.35h2.5c5.967 0 8.95-2.5 8.95-7.5v0c0-2.467-0.583-4.26-1.75-5.38-1.167-1.113-3.033-1.67-5.6-1.67v0c-1 0-2.367 0.067-4.1 0.2zM100.8 4.85h2.55l5.7-0.15c7.567 0 11.35 2.85 11.35 8.55v0c0 2.467-0.84 4.49-2.52 6.07-1.687 1.587-3.863 2.38-6.53 2.38v0c-0.233 0-0.65-0.033-1.25-0.1v0 0.1c3.567 0.5 6.027 1.657 7.38 3.47 1.347 1.82 2.02 4.597 2.02 8.33v0c0 2.333 0.433 3.683 1.3 4.05v0c0.4 0.267 0.96 0.4 1.68 0.4 0.713 0 1.637-0.217 2.77-0.65v0 1.25c-1.767 0.633-3.383 0.95-4.85 0.95v0c-3.267 0-5.283-1.4-6.05-4.2v0c-0.2-0.733-0.307-1.767-0.32-3.1-0.02-1.333-0.08-2.517-0.18-3.55-0.1-1.033-0.333-2.067-0.7-3.1v0c-0.833-2.233-3.133-3.35-6.9-3.35v0h-2.8v14.7l3.85 0.35v1.1h-12.75v-1.05l3.75-0.4v-30.4l-4.35-0.5v-1.3c2.133 0.1 4.417 0.15 6.85 0.15zM146.3 4.6v0c0 0 3.433 0.15 10.3 0.45v0l0.3 9.1h-1.6l-1.7-6.55c-1.8-0.767-3.933-1.15-6.4-1.15v0c-4.033 0-7.373 1.323-10.02 3.97-2.653 2.653-3.98 6.513-3.98 11.58 0 5.067 1.293 8.807 3.88 11.22 2.58 2.42 5.887 3.63 9.92 3.63v0c2.7 0 5.117-0.4 7.25-1.2v0l1.85-5.75 1.4 0.05-0.3 7.5c-3.833 0.8-7.123 1.2-9.87 1.2-2.753 0-5.02-0.15-6.8-0.45-1.787-0.3-3.53-0.833-5.23-1.6-1.7-0.767-3.14-1.75-4.32-2.95-1.187-1.2-2.137-2.76-2.85-4.68-0.72-1.913-1.08-4.253-1.08-7.02 0-2.767 0.543-5.327 1.63-7.68 1.08-2.347 2.553-4.203 4.42-5.57v0c3.7-2.733 8.1-4.1 13.2-4.1zM198.6 37.15v1.2h-13.85v-1.2l4.35-0.45v-14.85h-17.75v14.85l4.35 0.45v1.2h-13.85v-1.2l4.35-0.45v-30.1l-4.35-0.45v-1.2h13.85v1.2l-4.35 0.45v13.45h17.75v-13.45l-4.35-0.45v-1.2h13.85v1.2l-4.35 0.45v30.1z"
+                                                                          fill="#2b2b2b" fill-rule="nonzero"
+                                                                          stroke="none" stroke-width="1"
+                                                                          stroke-linecap="butt" stroke-linejoin="miter"
+                                                                          stroke-miterlimit="10" stroke-dasharray=""
+                                                                          stroke-dashoffset="0" font-family="none"
+                                                                          font-weight="none" font-size="none"
+                                                                          text-anchor="none"
+                                                                          style="mix-blend-mode: normal"
+                                                                          data-fill-palette-color="primary"
+                                                                          opacity="1"></path>
+                                                                </g>
+                                                            </svg>
+                                                        </g>
+                                                    </svg>
+                                                </g>
+                                            </svg>
+                                        </g>
+                                    </svg>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,6.034432392940019)">
+                                    <svg viewBox="0 0 244.43135999999996 142.96833796011538" height="142.96833796011538"
+                                         width="244.43135999999996">
+                                        <g>
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0" y="0"
+                                                 viewBox="9.124507904052734 28.569000244140625 79.81172180175781 46.6820182800293"
+                                                 enable-background="new 0 0 100 100" xml:space="preserve"
+                                                 height="142.96833796011538" width="244.43135999999996"
+                                                 class="icon-icon-0" data-fill-palette-color="accent" id="icon-0"><path d="M77.346 70.873l-4.242-4.243 4.242-4.243 4.242 4.243L77.346 70.873zM76.553 48.995c0.135 2.7 1.115 6.505 0.084 9.117 1.037-1.568 2.076-3.137 3.115-4.705-0.078 0.113-0.154 0.227-0.23 0.34 0.354-0.509 0.707-1.017 1.061-1.525-3.154 2.899-10.857 2.172-14.729 2.222-7.09 0.093-14.3 0.017-21.38-0.377-1.392 2.077-2.779 3.972-4.171 6.049 3.981-4.507 7.618-9.345 13.561-11.282 4.852-1.581 10.289 2.157 7.908 7.389 1.365-2.042 2.73-4.083 4.094-6.124-4.131 5.469-12.936 3.554-18.839 3.861-6.532 0.341-9.349-1.466-9.385-8.746-1.392 2.077-2.784 4.153-4.176 6.23 0.236 4.611 0.354 9.202-0.708 13.728-0.25 1.062-0.406 2.031-0.84 3.026 1.829-4.193 1.915-2.914-0.213-1.312-2.263 1.704-5.293 2.359-8.063 2.38-9.758 0.073-12.254-13.063-8.479-19.891-1.202 2.175-2.969 4.047-4.176 6.23-6.3 11.391 4.428 24.967 16.542 17.51 3.432-2.113 5.652-6.756 7.74-10.058 3.22-5.094 2.667-12.113 2.373-17.844 0.093 1.804-3.605 4.389-4.176 6.23-2.809 9.063 4.819 8.83 11.521 8.662 6.826-0.172 13.574 0.884 17.847-5.409 2.703-3.983 6.398-9.103 0.15-12.138-7.092-3.445-14.76 7.263-18.511 11.508-0.704 0.798-3.418 6.091-4.171 6.049 6.158 0.342 12.327 0.331 18.489 0.53 5.396 0.174 11.223 0.116 16.432-1.475 2.232-0.681 3.848-4.604 5-6.361 1.828-2.788 0.662-6.921 0.506-10.044C80.828 44.732 76.451 46.96 76.553 48.995L76.553 48.995zM83.822 34.696c0.926 8.998 0.807 18.333 0.75 27.375 0.012-2.018 4.312-4.044 4.326-6.127 0.057-9.042 0.176-18.377-0.75-27.375C88.338 30.405 83.625 32.786 83.822 34.696L83.822 34.696z" fill="#f4a424" data-fill-palette-color="accent"></path></svg>
+                                        </g>
+                                    </svg>
+                                </g>
+                            </svg>
+                        </g>
+                        <defs></defs>
+                    </svg>
+                </g>
+            </svg>
+        </section>
+        <section>
+            <div class="search-outer">
+                <div class="search-inner">
+                    <div style="width: 584px; height: 46px; position: absolute; display: flex; align-items: flex-end; padding: 5px 8px 0 14px; border-radius: 20px; border: 1px solid rgba(128, 128, 128, 0.329);">
+                        <div class="search-icon">
+                            <svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                            </svg>
+                        </div>
+                        <input type="text" id="search_field" name="search_field">
+                        <div class="voice-search">
+                            <svg class="goxjub" focusable="false" viewBox="0 0 24 24"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#4285f4"
+                                      d="m12 15c1.66 0 3-1.31 3-2.97v-7.02c0-1.66-1.34-3.01-3-3.01s-3 1.34-3 3.01v7.02c0 1.66 1.34 2.97 3 2.97z"></path>
+                                <path fill="#34a853" d="m11 18.08h2v3.92h-2z"></path>
+                                <path fill="#fbbc05"
+                                      d="m7.05 16.87c-1.27-1.33-2.05-2.83-2.05-4.87h2c0 1.45 0.56 2.42 1.47 3.38v0.32l-1.15 1.18z"></path>
+                                <path fill="#ea4335"
+                                      d="m12 16.93a4.97 5.25 0 0 1 -3.54 -1.55l-1.41 1.49c1.26 1.34 3.02 2.13 4.95 2.13 3.87 0 6.99-2.92 6.99-7h-1.99c0 2.92-2.24 4.93-5 4.93z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <!--Button Tag Start-->
+                    <div class="button-tags">
+                        <button type="submit" id="search_button">البحث بالزخارف العربية</button>
+                    </div>
+                    <!--Button Tag End-->
+                </div>
+
+            </div>
+        </section>
+        <div class="results-conteiner">
+            <div id="results"></div>
+        </div>
+    </main>
+
+
+    <!--Main End-->
+
+    <!--Footer Start-->
+    <footer>
+        <div class="google-footer">
+
+            <ul>
+                <li><a href="#">Advertising</a></li>
+                <li><a href="#">Business</a></li>
+                <li><a href="#">How Search Works</a></li>
+            </ul>
+
+            <ul>
+                <li><a href="#">Privacy</a></li>
+                <li><a href="#">Terms</a></li>
+                <li><a href="#">Settings</a></li>
+            </ul>
+
+        </div>
+    </footer>
+    <!--Footer End-->
+
+</div>
+</body>
+</html>
