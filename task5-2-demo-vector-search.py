@@ -4,7 +4,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 from pymorphy2 import MorphAnalyzer
 from os import listdir
 from flask import Flask, request, jsonify
+from googletrans import Translator, constants
+from pprint import pprint
 
+translator = Translator(service_urls=['translate.googleapis.com'])
 app = Flask(__name__)
 
 def load_file_index():
@@ -104,6 +107,7 @@ def main_page():
 def search_query():
     query = request.form['query']
     try:
+        query = translator.translate(query, dest="ru").text
         query_lemmatized = lemmatize_query(query.lower().strip().split(), morph, lemma_vocabulary)
         query_tfidf = calculate_query_tfidf(query_lemmatized, lemmas_in_docs)
         query_vector = convert_query_to_vector(query_tfidf, lemma_vocabulary)
